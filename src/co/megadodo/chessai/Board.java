@@ -41,8 +41,13 @@ public class Board {
 		
 	}
 	
+	public Board makeMove(Point2D.Float[]move) {
+		return makeMove((int)move[0].getX(),(int)move[0].getY(),(int)move[1].getX(),(int)move[1].getY());
+	}
+	
 	public Board makeMove(int x0,int y0,int x1,int y1) {
 		Board b=new Board();
+		
 //		
 //		if(x0==0&&y0==0) {
 //			castleWhite[0]=false;
@@ -92,6 +97,14 @@ public class Board {
 		
 		b.arr[x1][y1]=b.arr[x0][y0];
 		b.arr[x0][y0]=Piece.none;
+
+		if(y1==7&&b.arr[x1][y1].sameAs(Piece.whitePawn)) {
+			b.arr[x1][7]=Piece.whiteQueen;
+		}
+		if(y1==0&&b.arr[x1][y1].sameAs(Piece.blackPawn)) {
+			b.arr[x1][0]=Piece.blackQueen;
+		}
+		
 		return b;
 	}
 	
@@ -374,15 +387,26 @@ public class Board {
 		return getGoodMoves(list,x,y);
 	}
 	
-	public boolean isCheckmate(PieceColor c) {
+	public ArrayList<Point2D.Float[]> getMoves(PieceColor c){
+		ArrayList<Point2D.Float[]>list=new ArrayList<Point2D.Float[]>();
 		for(int x=0;x<8;x++) {
 			for(int y=0;y<8;y++) {
 				if(arr[x][y].color==c) {
-					if(getMoves(x,y).size()>0)return false;
+					ArrayList<Point2D.Float>l=getMoves(x,y);
+					for(Point2D.Float p:l) {
+						list.add(new Point2D.Float[] {
+							new Point2D.Float(x,y),
+							p
+						});
+					}
 				}
 			}
 		}
-		return true;
+		return list;
+	}
+	
+	public boolean isCheckmate(PieceColor c) {
+		return getMoves(c).size()==0&&isKingInCheck(c);
 	}
 	
 }
