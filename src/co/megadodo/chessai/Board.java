@@ -404,9 +404,13 @@ public class Board {
 		}
 		return list;
 	}
-	
+
 	public boolean isCheckmate(PieceColor c) {
 		return getMoves(c).size()==0&&isKingInCheck(c);
+	}
+	
+	public boolean isStalemate(PieceColor c) {
+		return getMoves(c).size()==0&&!isKingInCheck(c);
 	}
 	
 }

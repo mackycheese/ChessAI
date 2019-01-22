@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Float;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,11 +82,14 @@ public class ChessPanel extends JPanel implements MouseListener{
 					return;
 				System.out.println("AI Move " + moves[0].getX() + " " + moves[0].getY() + " to " + moves[1].getX() + " "
 						+ moves[1].getY());
+				lastAIMove=moves[1];
 				board = board.makeMove(moves);
 				repaint();
 			}
 		}, 10);
 	}
+	
+	public Float lastAIMove=null;
 	
 	@Override
 	public void paintComponent(Graphics g) {
@@ -102,6 +106,9 @@ public class ChessPanel extends JPanel implements MouseListener{
 				}
 				if(selection!=null) {
 					if(selection.getX()==x&&selection.getY()==y)g2d.setColor(Color.yellow);
+				}
+				if(new Float(x, y).equals(lastAIMove)) {
+					g2d.setColor(Color.red);
 				}
 				
 				g2d.fillRect(x*tw, (7-y)*th, tw, th);
@@ -164,6 +171,13 @@ public class ChessPanel extends JPanel implements MouseListener{
 			if(board.isCheckmate(PieceColor.Black)) {
 				JOptionPane.showMessageDialog(this, "White has won", "Game over", JOptionPane.INFORMATION_MESSAGE);
 			}
+			if(board.isStalemate(PieceColor.White)) {
+				JOptionPane.showMessageDialog(this, "White has been stalemated", "Game over", JOptionPane.INFORMATION_MESSAGE);
+			}
+			if(board.isStalemate(PieceColor.Black)) {
+				JOptionPane.showMessageDialog(this, "Black has been stalemated", "Game over", JOptionPane.INFORMATION_MESSAGE);
+			}
+			lastAIMove=null;
 			makeAIMove();
 			selection.setLocation(-1, -1);
 		}
